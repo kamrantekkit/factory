@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "factory:generator_side",
+    "up": "factory:generator_side",
+    "north": "factory:generator_front",
+    "south": "factory:generator_side",
+    "east": "factory:generator_side",
+    "west": "factory:generator_side"
+  }
+}

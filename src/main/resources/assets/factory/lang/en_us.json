@@ -1,0 +1,6 @@
+{
+  "block.factory.ore_stone": "Ore Stone;",
+  "block.factory.ore_iron": "Ore Iron",
+  "block.factory.generator": "Generator",
+  "screen.factory.generator": "Generator"
+}
