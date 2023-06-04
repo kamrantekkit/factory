@@ -118,3 +118,8 @@ run/
 !gradle-wrapper.jar
 /OldResources/
 /gradle/
+
+# The mysterious bin folder.
+/bin
+
+.vscode
