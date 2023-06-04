@@ -10,12 +10,12 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public abstract class BaseMachineTileEntity extends BlockEntity {
-    private static final int MACHINE_CAPACITY = 100000;
+    private static final int MACHINE_CAPACITY = 1000000;
     protected final EnergyStorage energyStorageHandler = createEnergy();
     protected final LazyOptional<IEnergyStorage> energyStorage = LazyOptional.of(() -> energyStorageHandler);
     private EnergyStorage createEnergy() {
         return new EnergyStorage(MACHINE_CAPACITY, 200) {
-            protected void onEnergyChanged() {
+            private void onEnergyChanged() {
                 setChanged();
             }
         };
@@ -41,7 +41,5 @@ public abstract class BaseMachineTileEntity extends BlockEntity {
 
 
     public abstract void serverTick();
-
-
 
 }

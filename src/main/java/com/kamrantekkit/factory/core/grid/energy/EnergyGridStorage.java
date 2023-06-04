@@ -1,4 +1,4 @@
-package com.kamrantekkit.factory.core.energy;
+package com.kamrantekkit.factory.core.grid.energy;
 
 import net.minecraftforge.energy.EnergyStorage;
 

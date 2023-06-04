@@ -3,7 +3,7 @@ package com.kamrantekkit.factory.entity;
 import com.kamrantekkit.factory.Factory;
 import com.kamrantekkit.factory.blocks.property.ConnectProperty;
 import com.kamrantekkit.factory.blocks.property.EnumConnectProperty;
-import com.kamrantekkit.factory.core.energy.EnergyGrid;
+import com.kamrantekkit.factory.core.grid.energy.EnergyGrid;
 import com.kamrantekkit.factory.setup.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +26,7 @@ public class CableTileEntity extends BlockEntity {
     }
     public Boolean checkForExistingGrid(CableTileEntity cableTile) {
         if (cableTile.hasGrid()) {
+            Factory.getLogger().info("Cable at: " + worldPosition + "Found grid");
             energyGrid = cableTile.getGrid();
             return true;
         }
@@ -56,7 +57,9 @@ public class CableTileEntity extends BlockEntity {
         BlockEntity entity = level.getBlockEntity(pos);
 
         if (entity != null) {
-            if (entity.getCapability(CapabilityEnergy.ENERGY, direction).isPresent()) {
+            if (entity instanceof CableTileEntity) {
+                updateConnectState(direction, EnumConnectProperty.CONNECT);
+            } else if (entity.getCapability(CapabilityEnergy.ENERGY, direction).isPresent()) {
                 updateConnectState(direction, EnumConnectProperty.CONNECT);
             }
         }
@@ -111,13 +114,10 @@ public class CableTileEntity extends BlockEntity {
     }
 
     public Boolean hasGrid() {
-        if (energyGrid  == null) return false;
-        return true;
+        return energyGrid != null;
     }
 
     public void newGrid() {
         energyGrid = EnergyGrid.newGrid();
     }
-
-
 }

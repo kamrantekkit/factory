@@ -1,6 +1,5 @@
 package com.kamrantekkit.factory.blocks;
 
-import com.kamrantekkit.factory.Factory;
 import com.kamrantekkit.factory.blocks.property.ConnectProperty;
 import com.kamrantekkit.factory.blocks.property.EnumConnectProperty;
 import com.kamrantekkit.factory.entity.CableTileEntity;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -19,11 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 
 public class Cable extends BaseEntityBlock {
     public static final EnumProperty<EnumConnectProperty> UP = ConnectProperty.UP;
@@ -74,11 +70,16 @@ public class Cable extends BaseEntityBlock {
     @Override
     public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
         CableTileEntity cable = (CableTileEntity) world.getBlockEntity(pos);
+        if (cable == null) return;
         boolean foundGrid = false;
         for (Direction d : Direction.values()) {
             BlockEntity facingTile = world.getBlockEntity(pos.relative(d));
             if (facingTile != null) {
-                if (facingTile.getCapability(CapabilityEnergy.ENERGY).isPresent()) {
+                if (facingTile.getCapability(CapabilityEnergy.ENERGY, d).isPresent()) {
+                    if (facingTile instanceof CableTileEntity) {
+                        foundGrid = true;
+                        cable.checkForExistingGrid((CableTileEntity) facingTile);
+                    }
                     state = state.setValue(ConnectProperty.FACING_TO_PROPERTY_MAP.get(d), EnumConnectProperty.CONNECT);
                     world.setBlockAndUpdate(pos, state);
                 } else {
@@ -87,6 +88,7 @@ public class Cable extends BaseEntityBlock {
                 }
             }
         }
+        if (!foundGrid) cable.newGrid();
     }
 
     @Override
@@ -97,6 +99,7 @@ public class Cable extends BaseEntityBlock {
 
 
     @Override
+    @Deprecated
     public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighbourState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighbourPos) {
         CableTileEntity cableTile = (CableTileEntity) level.getBlockEntity(pos);
         if (cableTile != null) {
