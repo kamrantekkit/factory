@@ -24,14 +24,16 @@ public class CableTileEntity extends BlockEntity {
     public CableTileEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModEntities.CABLE_ENERGY_ENTITY.get(),p_155229_, p_155230_);
     }
-    public Boolean checkForExistingGrid(CableTileEntity cableTile) {
-        if (cableTile.hasGrid()) {
-            Factory.getLogger().info("Cable at: " + worldPosition + "Found grid");
-            energyGrid = cableTile.getGrid();
-            return true;
-        }
-        return false;
-    }
+//    public Boolean checkForExistingGrid(CableTileEntity cableTile) {
+//        if (cableTile.hasGrid()) {
+//            Factory.getLogger().info("Cable at: " + worldPosition + "Found grid");
+//            EnergyGrid grid = cableTile.getGrid();
+//            grid.addNode(getBlockPos());
+//            energyGrid = grid;
+//            return true;
+//        }
+//        return false;
+//    }
 
     public EnumConnectProperty getConnectState(Direction direction) {
         return getBlockState().getValue(ConnectProperty.FACING_TO_PROPERTY_MAP.get(direction));
@@ -55,15 +57,15 @@ public class CableTileEntity extends BlockEntity {
             return;
         }
         BlockEntity entity = level.getBlockEntity(pos);
-
         if (entity != null) {
             if (entity instanceof CableTileEntity) {
                 updateConnectState(direction, EnumConnectProperty.CONNECT);
+                if (level.isClientSide) return;
+                energyGrid.updateNodeNeighbours(worldPosition, pos);
             } else if (entity.getCapability(CapabilityEnergy.ENERGY, direction).isPresent()) {
                 updateConnectState(direction, EnumConnectProperty.CONNECT);
             }
         }
-
     }
 
     private Direction getSide(BlockPos pos) {
@@ -113,11 +115,11 @@ public class CableTileEntity extends BlockEntity {
         return energyGrid;
     }
 
-    public Boolean hasGrid() {
-        return energyGrid != null;
+    public void setGrid(EnergyGrid energyGrid) {
+        this.energyGrid = energyGrid;
     }
 
-    public void newGrid() {
-        energyGrid = EnergyGrid.newGrid();
+    public Boolean hasGrid() {
+        return energyGrid != null;
     }
 }

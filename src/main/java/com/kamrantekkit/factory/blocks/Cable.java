@@ -1,8 +1,13 @@
 package com.kamrantekkit.factory.blocks;
 
+import com.kamrantekkit.factory.Factory;
 import com.kamrantekkit.factory.blocks.property.ConnectProperty;
 import com.kamrantekkit.factory.blocks.property.EnumConnectProperty;
+import com.kamrantekkit.factory.core.grid.GridManager;
+import com.kamrantekkit.factory.core.grid.energy.EnergyGrid;
 import com.kamrantekkit.factory.entity.CableTileEntity;
+import com.kamrantekkit.factory.setup.ModBlocks;
+import com.kamrantekkit.factory.setup.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +24,9 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class Cable extends BaseEntityBlock {
@@ -54,31 +62,32 @@ public class Cable extends BaseEntityBlock {
         return null;
     }
 
-
-
-//    @Override
-//    public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
-//a        if (level.isClientSide()) return;
-//        BlockEntity entity = level.getBlockEntity(pos);
-//        Factory.getLogger().info("Block Updating at: " + pos);
-//        if (entity instanceof CableTileEntity) {
-//            ((CableTileEntity) entity).onNeighbourChange(pos, neighbor);
-//        }
-//        super.onNeighborChange(state,level,pos,neighbor);
-//    }
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos blockPos, BlockState newState, boolean p_60519_) {
+        if(level.isClientSide()) return;
+        if (defaultBlockState().getBlock() == newState.getBlock()) return;
+        BlockEntity entity = level.getBlockEntity(blockPos);
+        if (!(entity instanceof CableTileEntity)) return;
+        ((CableTileEntity) entity).getGrid().removeNode(blockPos);
+        super.onRemove(state,level, blockPos, newState, p_60519_);
+    }
 
     @Override
     public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
+        if (world.isClientSide) return;
         CableTileEntity cable = (CableTileEntity) world.getBlockEntity(pos);
         if (cable == null) return;
-        boolean foundGrid = false;
+        GridManager gridManager = world.getCapability(ModCapabilities.GRID_MANAGER_CAPABILITY).resolve().get();
+        ArrayList<CableTileEntity> neighbours = new ArrayList<>();
+        HashSet<EnergyGrid> gridNeighbours = new HashSet<>();
         for (Direction d : Direction.values()) {
             BlockEntity facingTile = world.getBlockEntity(pos.relative(d));
             if (facingTile != null) {
                 if (facingTile.getCapability(CapabilityEnergy.ENERGY, d).isPresent()) {
                     if (facingTile instanceof CableTileEntity) {
-                        foundGrid = true;
-                        cable.checkForExistingGrid((CableTileEntity) facingTile);
+                        EnergyGrid grid = ((CableTileEntity) facingTile).getGrid();;
+                        neighbours.add((CableTileEntity) facingTile);
+                        gridNeighbours.add(grid);
                     }
                     state = state.setValue(ConnectProperty.FACING_TO_PROPERTY_MAP.get(d), EnumConnectProperty.CONNECT);
                     world.setBlockAndUpdate(pos, state);
@@ -88,7 +97,18 @@ public class Cable extends BaseEntityBlock {
                 }
             }
         }
-        if (!foundGrid) cable.newGrid();
+        EnergyGrid grid;
+        if (gridNeighbours.isEmpty()) {
+            grid = gridManager.createNewGrid();
+        } else {
+            grid = gridNeighbours.iterator().next();
+        }
+        grid.addNode(pos);
+        cable.setGrid(grid);
+        for (CableTileEntity neighbour : neighbours) {
+            grid.updateNodeNeighbours(pos, neighbour.getBlockPos());
+        }
+        Factory.getLogger().info("Cable at: " + pos + "Found grid");
     }
 
     @Override

@@ -26,9 +26,7 @@ public class BaseGeneratorTileEntity extends  BaseMachineTileEntity  {
     private static final int POWERGEN_GENERATIONRATE = 20;
     private final ItemStackHandler itemHandler = createHandler();
     private final LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemHandler);
-
     private int remainingBurningTicks = 0;
-
 
     public BaseGeneratorTileEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModEntities.GENERATORENTITY.get(), p_155229_, p_155230_);

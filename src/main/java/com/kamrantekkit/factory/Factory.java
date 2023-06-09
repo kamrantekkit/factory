@@ -39,6 +39,8 @@ public class Factory {
         ModEntities.BLOCK_ENTITIES.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
 
+        ModCapabilities.register();
+
     }
 
     public static Logger getLogger() {
