@@ -4,7 +4,6 @@ import com.kamrantekkit.factory.containers.BaseGeneratorContainer;
 import com.kamrantekkit.factory.entity.BaseGeneratorTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,7 +12,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
@@ -41,7 +42,7 @@ public class BaseGenerator extends BaseMachine  {
 
                     @Override
                     public Component getDisplayName() {
-                        return new TranslatableComponent(SCREEN_FACTORY_GENERATOR);
+                        return Component.translatable(SCREEN_FACTORY_GENERATOR);
                     }
 
                     @Override
@@ -49,7 +50,7 @@ public class BaseGenerator extends BaseMachine  {
                         return new BaseGeneratorContainer(windowId, blockPos, playerInventory, playerEntity);
                     }
                 };
-                NetworkHooks.openGui((ServerPlayer) player, containerProvider, be.getBlockPos());
+                NetworkHooks.openScreen((ServerPlayer) player, containerProvider, be.getBlockPos());
 
             } else {
                 throw new IllegalStateException("Our named container provider is missing!");

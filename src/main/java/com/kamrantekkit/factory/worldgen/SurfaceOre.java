@@ -3,6 +3,7 @@ package com.kamrantekkit.factory.worldgen;
 import com.kamrantekkit.factory.Factory;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -23,7 +24,7 @@ public class SurfaceOre extends Feature<SurfaceOreConfig>   {
     @Override
     public boolean place(FeaturePlaceContext<SurfaceOreConfig> context) {
         ChunkGenerator chunkGenerator = context.chunkGenerator();
-        Random random = context.random();
+        RandomSource random = context.random();
         WorldGenLevel level = context.level();
         BlockPos pos = context.origin();
         ChunkAccess chunk = level.getChunk(pos);

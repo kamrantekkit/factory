@@ -10,8 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -62,7 +62,7 @@ public class CableTileEntity extends BlockEntity {
                 updateConnectState(direction, EnumConnectProperty.CONNECT);
                 if (level.isClientSide) return;
                 energyGrid.updateNodeNeighbours(worldPosition, pos);
-            } else if (entity.getCapability(CapabilityEnergy.ENERGY, direction).isPresent()) {
+            } else if (entity.getCapability(ForgeCapabilities.ENERGY, direction).isPresent()) {
                 updateConnectState(direction, EnumConnectProperty.CONNECT);
             }
         }
@@ -104,7 +104,7 @@ public class CableTileEntity extends BlockEntity {
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY && side != null) {
+        if (cap == ForgeCapabilities.ENERGY && side != null) {
             if (getConnectState(side) != EnumConnectProperty.CONNECT) updateConnectState(side.getOpposite(), EnumConnectProperty.CONNECT);
             return energyGrid.getCapability(cap);
         }

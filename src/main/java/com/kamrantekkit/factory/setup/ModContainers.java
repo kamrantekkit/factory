@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 import static com.kamrantekkit.factory.Factory.MODID;
 
 public class ModContainers {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
 
     public static final RegistryObject<MenuType<BaseGeneratorContainer>> GENERATOR = CONTAINERS.register("generator", () -> IForgeMenuType.create((windowId, inv, data) -> new BaseGeneratorContainer(windowId, data.readBlockPos(), inv, inv.player)));
 

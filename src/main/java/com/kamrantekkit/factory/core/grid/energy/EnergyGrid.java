@@ -6,16 +6,15 @@ import com.google.common.graph.MutableGraph;
 import com.kamrantekkit.factory.Factory;
 import com.kamrantekkit.factory.core.grid.Grid;
 import com.kamrantekkit.factory.core.grid.GridManager;
-import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SugarCaneBlock;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,7 @@ public class EnergyGrid extends Grid {
         return new EnergyGridStorage(BASE_CAPACITY, TRANSFERRATE);
     }
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        if (cap == CapabilityEnergy.ENERGY) {
+        if (cap == ForgeCapabilities.ENERGY) {
             return energyStorage.cast();
         }
         return LazyOptional.empty();
@@ -98,27 +97,27 @@ public class EnergyGrid extends Grid {
     }
 
     private void seperateGrid(Set<BlockPos> disconnectedNodes) {
-        ArrayList<ArrayList<BlockPos>> foundBranches = new ArrayList<>();
+        ArrayList<Set<BlockPos>> foundBranches = new ArrayList<>();
         for (BlockPos pos : disconnectedNodes) {
             Boolean duplicateBranch = false;
             //Finds if a cable loops back for whatever reason
-            for (ArrayList<BlockPos> branch : foundBranches) {
+            for (Set<BlockPos> branch : foundBranches) {
                 if (branch.contains(pos)) {
                     duplicateBranch = true;
                     break;
                 }
             }
             if (duplicateBranch) continue;
-            ArrayList<BlockPos> foundNodes = searchBranch(pos);
-            foundBranches.add(foundNodes);
+            MutableGraph<BlockPos> nodeMap = searchBranch(pos);
+            foundBranches.add(nodeMap.nodes());
             Factory.getLogger().info("Starting Branch Search at " + pos);
-            for (BlockPos node : foundNodes) {
+            for (BlockPos node : nodeMap.nodes()) {
                 Factory.getLogger().info(node.toShortString());
             }
         }
     }
 
-    private ArrayList<BlockPos> searchBranch(BlockPos pos) {
+    private MutableGraph<BlockPos> searchBranch(BlockPos pos) {
         return searchBranch(pos, null);
     }
 
@@ -127,24 +126,37 @@ public class EnergyGrid extends Grid {
      * @param branchNode everytime the branch split, the node where it split from is added so it does go back on itself
      * @return
      */
-    private ArrayList<BlockPos> searchBranch(BlockPos startNode, @Nullable BlockPos branchNode) {
-        ArrayList<BlockPos> foundNodes = new ArrayList<>();
-        foundNodes.add(startNode);
+    private MutableGraph<BlockPos> searchBranch(BlockPos startNode, @Nullable BlockPos branchNode) {
+        MutableGraph<BlockPos> foundNodes = GraphBuilder.undirected().nodeOrder(ElementOrder.unordered()).build();
+        foundNodes.addNode(startNode);
         while (true) {
             Set<BlockPos> adjacentNodes =  new HashSet<>(nodes.adjacentNodes(startNode));
             if (branchNode != null) {
                 adjacentNodes.remove(branchNode);
             }
-            if (foundNodes.stream().anyMatch(adjacentNodes::contains)) foundNodes.forEach(adjacentNodes::remove);
+            if (foundNodes.nodes().stream().anyMatch(adjacentNodes::contains)) {
+                for (BlockPos node : foundNodes.nodes()) {
+                    adjacentNodes.remove(node);
+                }
+            }
             if (adjacentNodes.isEmpty()) {
                 return foundNodes;
             } else {
                 for (BlockPos blockPos : adjacentNodes) {
                     if (adjacentNodes.size() == 1) {
-                        foundNodes.add(blockPos);
+                        foundNodes.addNode(blockPos);
+                        foundNodes.putEdge(startNode, blockPos);
                         startNode = blockPos;
                     } else {
-                        foundNodes.addAll(searchBranch(blockPos, startNode));
+                        MutableGraph<BlockPos> branchNodeMap = searchBranch(blockPos, startNode);
+                        for (BlockPos node : branchNodeMap.nodes()) {
+                            foundNodes.addNode(node);
+                        }
+                        for (BlockPos node : branchNodeMap.nodes()) {
+                            for (BlockPos neighbour : branchNodeMap.adjacentNodes(node)) {
+                                foundNodes.putEdge(node, neighbour);
+                            };
+                        }
                     }
                 }
             }

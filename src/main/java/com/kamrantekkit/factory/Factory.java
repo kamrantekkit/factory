@@ -1,10 +1,9 @@
 package com.kamrantekkit.factory;
 
-import com.kamrantekkit.factory.datagen.BlockStatesProvider;
-import com.kamrantekkit.factory.datagen.DataGenerators;
-import com.kamrantekkit.factory.datagen.ItemModelsProvider;
 import com.kamrantekkit.factory.setup.*;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.feature.LakeFeature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -12,7 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,6 @@ public class Factory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public Factory() {
-
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register ourselves for server and other game events we are interested in

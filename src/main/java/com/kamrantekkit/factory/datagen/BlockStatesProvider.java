@@ -15,7 +15,7 @@ public class BlockStatesProvider extends BlockStateProvider {
     private final ExistingFileHelper exFileHelper;
 
     public BlockStatesProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
-        super(gen, Factory.MODID, exFileHelper);
+        super(gen.getPackOutput(), com.kamrantekkit.factory.Factory.MODID, exFileHelper);
         this.exFileHelper = exFileHelper;
     }
 
@@ -26,7 +26,7 @@ public class BlockStatesProvider extends BlockStateProvider {
     }
 
     private void createSimpleMachine(Block block) {
-        BlockModelBuilder model = models().cube(block.getRegistryName().getPath(),
+        BlockModelBuilder model = models().cube(block.getName().getString(),
                 createResourcePath("generator_side"),
                 createResourcePath("generator_side"),
                 createResourcePath("generator_front"),
@@ -39,8 +39,8 @@ public class BlockStatesProvider extends BlockStateProvider {
     }
 
     private void createCable(Block block) {
-        BlockModelBuilder cableBase = new BlockModelBuilder(createModelPath(block.getRegistryName().getPath() + "_base"), exFileHelper);
-        BlockModelBuilder cableConnection = new BlockModelBuilder(createModelPath(block.getRegistryName().getPath() + "_connection"), exFileHelper);
+        BlockModelBuilder cableBase = new BlockModelBuilder(createModelPath(block.getName().getString() + "_base"), exFileHelper);
+        BlockModelBuilder cableConnection = new BlockModelBuilder(createModelPath(block.getName().getString() + "_connection"), exFileHelper);
 
 
         MultiPartBlockStateBuilder multipart = getMultipartBuilder(block)
@@ -54,11 +54,11 @@ public class BlockStatesProvider extends BlockStateProvider {
     }
 
     private ResourceLocation createResourcePath(String name) {
-       return new ResourceLocation(Factory.MODID,name);
+       return new ResourceLocation(com.kamrantekkit.factory.Factory.MODID,name);
     }
 
     private ResourceLocation createModelPath(String name) {
-        return new ResourceLocation(Factory.MODID, "/block/"+ name);
+        return new ResourceLocation(com.kamrantekkit.factory.Factory.MODID, "/block/"+ name);
     }
 
 }

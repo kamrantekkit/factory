@@ -1,12 +1,10 @@
 package com.kamrantekkit.factory.blocks;
 
-import com.kamrantekkit.factory.Factory;
 import com.kamrantekkit.factory.blocks.property.ConnectProperty;
 import com.kamrantekkit.factory.blocks.property.EnumConnectProperty;
 import com.kamrantekkit.factory.core.grid.GridManager;
 import com.kamrantekkit.factory.core.grid.energy.EnergyGrid;
 import com.kamrantekkit.factory.entity.CableTileEntity;
-import com.kamrantekkit.factory.setup.ModBlocks;
 import com.kamrantekkit.factory.setup.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +82,7 @@ public class Cable extends BaseEntityBlock {
         for (Direction d : Direction.values()) {
             BlockEntity facingTile = world.getBlockEntity(pos.relative(d));
             if (facingTile != null) {
-                if (facingTile.getCapability(CapabilityEnergy.ENERGY, d).isPresent()) {
+                if (facingTile.getCapability(ForgeCapabilities.ENERGY, d).isPresent()) {
                     if (facingTile instanceof CableTileEntity) {
                         EnergyGrid grid = ((CableTileEntity) facingTile).getGrid();;
                         neighbours.add((CableTileEntity) facingTile);
@@ -97,18 +96,7 @@ public class Cable extends BaseEntityBlock {
                 }
             }
         }
-        EnergyGrid grid;
-        if (gridNeighbours.isEmpty()) {
-            grid = gridManager.createNewGrid();
-        } else {
-            grid = gridNeighbours.iterator().next();
-        }
-        grid.addNode(pos);
-        cable.setGrid(grid);
-        for (CableTileEntity neighbour : neighbours) {
-            grid.updateNodeNeighbours(pos, neighbour.getBlockPos());
-        }
-        Factory.getLogger().info("Cable at: " + pos + "Found grid");
+        gridManager.onNodePlace(cable, neighbours, gridNeighbours);
     }
 
     @Override
