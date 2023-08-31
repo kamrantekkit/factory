@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "factory:cable_energy",
-		"particle": "factory:cable_energy"
+		"0": "factory:block/cable_energy",
+		"particle": "factory:block/cable_energy"
 	},
 	"elements": [
 		{

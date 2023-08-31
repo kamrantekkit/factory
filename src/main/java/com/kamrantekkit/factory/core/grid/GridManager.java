@@ -31,17 +31,18 @@ public class GridManager implements INBTSerializable<ListTag> {
     public void onNodePlace(@NotNull CableTileEntity cableTile, @NotNull ArrayList<CableTileEntity> neighbours, @NotNull HashSet<EnergyGrid> gridNeighbours) {
         //TODO Merge grids if there is multiple by adding grid check for duplicates in grid neighbours
 
-//        EnergyGrid grid;
+        EnergyGrid grid = this.createNewGrid();;
 //        if (gridNeighbours.isEmpty()) {
 //            grid = this.createNewGrid();
-//        } else {
+//        }
+//        else {
 //            grid = mergeGrids();
 //        }
-//        grid.addNode(cableTile.getBlockPos());
-//        cableTile.setGrid(grid);
-//        for (CableTileEntity neighbour : neighbours) {
-//            grid.updateNodeNeighbours(cableTile.getBlockPos(), neighbour.getBlockPos());
-//        }
+        grid.addNode(cableTile.getBlockPos());
+        cableTile.setGrid(grid);
+        for (CableTileEntity neighbour : neighbours) {
+            grid.updateNodeNeighbours(cableTile.getBlockPos(), neighbour.getBlockPos());
+        }
     }
 
     public EnergyGrid createNewGrid() {

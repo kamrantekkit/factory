@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 public class BlockStatesProvider extends BlockStateProvider {
     private final ExistingFileHelper exFileHelper;
@@ -21,12 +22,12 @@ public class BlockStatesProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        createSimpleMachine(ModBlocks.GENERATOR.get());
-        createCable(ModBlocks.CABLE_ENERGY.get());
+        createSimpleMachine(ModBlocks.GENERATOR);
+        createCable(ModBlocks.CABLE_ENERGY);
     }
 
-    private void createSimpleMachine(Block block) {
-        BlockModelBuilder model = models().cube(block.getName().getString(),
+    private void createSimpleMachine(RegistryObject<Block> block) {
+        BlockModelBuilder model = models().cube(block.getId().getPath(),
                 createResourcePath("generator_side"),
                 createResourcePath("generator_side"),
                 createResourcePath("generator_front"),
@@ -35,15 +36,15 @@ public class BlockStatesProvider extends BlockStateProvider {
                 createResourcePath("generator_side")
         );
 
-        horizontalBlock(block, model);
+        horizontalBlock(block.get(), model);
     }
 
-    private void createCable(Block block) {
-        BlockModelBuilder cableBase = new BlockModelBuilder(createModelPath(block.getName().getString() + "_base"), exFileHelper);
-        BlockModelBuilder cableConnection = new BlockModelBuilder(createModelPath(block.getName().getString() + "_connection"), exFileHelper);
+    private void createCable(RegistryObject<Block> block) {
+        BlockModelBuilder cableBase = new BlockModelBuilder(createResourcePath(block.getId().getPath() + "_base"), exFileHelper);
+        BlockModelBuilder cableConnection = new BlockModelBuilder(createResourcePath(block.getId().getPath() + "_connection"), exFileHelper);
 
 
-        MultiPartBlockStateBuilder multipart = getMultipartBuilder(block)
+        MultiPartBlockStateBuilder multipart = getMultipartBuilder(block.get())
                 .part().modelFile(cableBase).addModel().end()
                 .part().modelFile(cableConnection).addModel().condition(ConnectProperty.NORTH, EnumConnectProperty.CONNECT).end()
                 .part().rotationX(90).modelFile(cableConnection).addModel().condition(ConnectProperty.UP, EnumConnectProperty.CONNECT).end()
@@ -54,11 +55,7 @@ public class BlockStatesProvider extends BlockStateProvider {
     }
 
     private ResourceLocation createResourcePath(String name) {
-       return new ResourceLocation(com.kamrantekkit.factory.Factory.MODID,name);
-    }
-
-    private ResourceLocation createModelPath(String name) {
-        return new ResourceLocation(com.kamrantekkit.factory.Factory.MODID, "/block/"+ name);
+        return new ResourceLocation(com.kamrantekkit.factory.Factory.MODID, "block/" + name);
     }
 
 }

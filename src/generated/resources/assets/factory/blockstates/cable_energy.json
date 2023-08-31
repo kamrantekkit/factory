@@ -2,60 +2,60 @@
   "multipart": [
     {
       "apply": {
-        "model": "factory:/block/cable_energy_base"
+        "model": "factory:block/cable_energy_base"
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection"
+      },
       "when": {
         "north": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection"
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection",
+        "x": 90
+      },
       "when": {
         "up": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection",
-        "x": 90
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection",
+        "x": 180
+      },
       "when": {
         "south": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection",
-        "x": 180
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection",
+        "x": 270
+      },
       "when": {
         "down": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection",
-        "x": 270
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection",
+        "y": 90
+      },
       "when": {
         "east": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection",
-        "y": 90
       }
     },
     {
+      "apply": {
+        "model": "factory:block/cable_energy_connection",
+        "y": 270
+      },
       "when": {
         "west": "connect"
-      },
-      "apply": {
-        "model": "factory:/block/cable_energy_connection",
-        "y": 270
       }
     }
   ]

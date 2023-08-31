@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"0": "factory:ore_stone_base",
-		"particle": "factory:ore_stone_base"
+		"0": "factory:block/ore_stone_base",
+		"particle": "factory:block/ore_stone_base"
 	},
 	"elements": [
 		{

@@ -1,7 +1,5 @@
 package com.kamrantekkit.factory.datagen;
 
-import com.kamrantekkit.factory.Factory;
-import com.kamrantekkit.factory.setup.ModBlocks;
 import com.kamrantekkit.factory.setup.ModItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -17,12 +15,13 @@ public class ItemModelsProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        withExistingParent(ModItems.GENERATOR.getKey().toString(), createResourcePath("block/generator"));
-        withExistingParent(ModItems.CABLE_ENERGY.getKey().toString(), createResourcePath("block/cable_energy_base"));
+        System.out.println(createResourcePath("cable_energy_base"));
+        withExistingParent(ModItems.GENERATOR.getId().toString(), createResourcePath("generator"));
+        withExistingParent(ModItems.CABLE_ENERGY.getId().toString(), createResourcePath("cable_energy_base"));
     }
 
 
     private ResourceLocation createResourcePath(String name) {
-        return  new ResourceLocation(com.kamrantekkit.factory.Factory.MODID,name);
+        return  new ResourceLocation(com.kamrantekkit.factory.Factory.MODID,"block/" + name);
     }
 }
