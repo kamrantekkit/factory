@@ -1,10 +1,12 @@
 package com.kamrantekkit.factory;
 
+import com.kamrantekkit.factory.datagen.DataGenerators;
 import com.kamrantekkit.factory.setup.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.LakeFeature;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -36,6 +38,7 @@ public class Factory {
         ModFeatures.FEATURES.register(modEventBus);
         ModEntities.BLOCK_ENTITIES.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
+        ModCodec.BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
 
         ModCapabilities.register();
 
@@ -67,6 +70,8 @@ public class Factory {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+
+
 
 
 }
